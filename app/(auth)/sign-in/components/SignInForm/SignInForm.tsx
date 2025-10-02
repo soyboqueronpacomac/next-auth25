@@ -23,22 +23,34 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { LoginFormValues, loginSchema } from "../../libs";
+import { signInAction } from "@/actions";
+import { Router } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 
 // Simula tu acción de login (sustituye por server action o fetch)
 async function loginAction(values: LoginFormValues) {
-  console.log("Login:", values);
+   await signInAction(values)
+  
   // await signIn(...) / fetch("/api/login", { method: "POST", body: JSON.stringify(values) })
 }
 
 export function SignInForm() {
+  const router = useRouter()
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
   const onSubmit = form.handleSubmit(async (values) => {
-    await loginAction(values);
+    form.clearErrors("root")
+    const res=  await signInAction(values);
+    if (!res.success) {
+      form.setError("root", { message: res.error || "No se pudo iniciar sesión"})
+    } else {
+
+      router.push("/dashboard")
+    }
   });
 
   return (
@@ -60,6 +72,7 @@ export function SignInForm() {
 
         <Form {...form}>
           <form onSubmit={onSubmit}>
+            {form.formState.errors.root && <p className="text-sm text-red-500 mb-4">{form.formState.errors.root.message}</p>}
             <CardContent className="flex flex-col gap-4 mb-6">
               {/* Email */}
               <FormField

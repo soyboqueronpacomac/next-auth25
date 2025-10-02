@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar, ThemeProvider } from "@/app/components";
+import { SessionProvider } from "@/components";
+import Providers from "./components/Providers/Provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,16 +30,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Navbar />
+        <Providers>
+            <Navbar />
+            
+            <main className="mt-14 container">
+              {children}
+            </main>
           
-          {children}
-        </ThemeProvider>
+        </Providers>
         
       </body>
     </html>

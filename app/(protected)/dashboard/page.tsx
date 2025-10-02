@@ -1,16 +1,19 @@
-import { auth } from "@/auth"
-import React from "react";
- 
+import { auth } from "@/auth";            // 👈 v5
+import { redirect } from "next/navigation";
+import {LogoutButton} from "@/components/LogoutButton"; // 👈 importa por ruta directa
+
 export default async function Page() {
-  const session = await auth()
- 
+  const session = await auth();
+
   if (!session) {
-    return <div>Not authenticated</div>
+    // si no hay sesión, fuera
+    redirect("/sign-in");
   }
- 
+
   return (
-    <div className="container">
-      <pre>{JSON.stringify(session, null, 2)}</pre>
+    <div className="container py-6">
+      <pre className="mb-4">{JSON.stringify(session, null, 2)}</pre>
+      <LogoutButton />
     </div>
-  )
+  );
 }
